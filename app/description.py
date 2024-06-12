@@ -117,4 +117,4 @@ def get_seo(sour): # это основная функция
     descriptions = {'main_description': goal_2[0], 'snippet': goal_2[1]}
     descriptions = json.dumps(descriptions) # dict to string
     descriptions = json.loads(descriptions) # string to json    
-    return descriptions 
+    return json.dumps(descriptions, ensure_ascii=False)
