@@ -27,8 +27,10 @@ def search(q='apple macbook air m1',testmode=False):
 
 def parsewebpage(url):
     html = requests.get(url).text
-
-    soup = BeautifulSoup(html,"html.parser",from_encoding="utf-8")
+    try:
+        soup = BeautifulSoup(html,"html.parser",from_encoding="utf-8")
+    except:
+        return 'Protected'
     alltext = soup.findAll('div')
     simple=[i.text.replace('\n',' ') for i in alltext]
     site=' '.join(simple)
@@ -110,7 +112,7 @@ def searchlist(trusted_sources,brand = 'APPLE',model = 'MACBOOK PRO "MK183"',par
     trusted_sites = ['']
     search_mode = 'site:'
     search_range = 'trusted'
-    if brand in trusted_sources.keys(): trusted_sites = trusted_sources[brand]
+    if brand.upper() in trusted_sources.keys(): trusted_sites = trusted_sources[brand.upper()]
     else:
         search_mode = ''
         search_range = 'global'
