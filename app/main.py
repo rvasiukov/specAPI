@@ -6,6 +6,7 @@ from typing import Optional
 from description import get_seo
 from specifications import get_spec
 import urllib.request
+import json
 
 
 app = FastAPI()
@@ -34,7 +35,7 @@ async def login_for_access_token():
 
 
 @app.get("/get_specifications")
-def get_sign(token:str, brand:str, model:str, part_num:str=''):
+def get_specifications(token:str, brand:str, model:str, part_num:str=''):
     try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
             # Здесь вы можете выполнить проверку токена и получить информацию о пользователе из токена
@@ -44,15 +45,36 @@ def get_sign(token:str, brand:str, model:str, part_num:str=''):
     return get_spec(brand, model, part_num)
 
 @app.get("/get_description")
-def AI_description(brand, model, token):
+def get_description(text, token):
     try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
             # Здесь вы можете выполнить проверку токена и получить информацию о пользователе из токена
     except JWTError:
         raise HTTPException(status_code=401, detail="Неверные учетные данные")
-    res = get_seo(str(brand)+str(model))
+    res = get_seo(str(text))
     return res
 
 @app.post("/get_ip")
 def ip():
     return urllib.request.urlopen('https://ident.me').read().decode('utf8')
+
+@app.get("/get_fullcard")
+def get_fullcard(token:str, brand:str, model:str, part_num:str=''):
+    try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            # Здесь вы можете выполнить проверку токена и получить информацию о пользователе из токена
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Неверные учетные данные")
+    res = get_spec(brand, model, part_num)
+    y = json.loads(res)
+    i=0
+    s=''
+    while True:
+        try:
+            s+=y['specifications']['specification'+str(i)]['name']+' - '+y['specifications']['specification'+str(i)]['value']+'\n'
+        except:
+            break
+        i+=1
+    m = {**json.loads(res),**json.loads(get_seo(str(s)))}
+    r = json.dumps(m, ensure_ascii=False)
+    return r
