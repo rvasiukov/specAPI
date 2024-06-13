@@ -119,7 +119,8 @@ def searchlist(trusted_sources,brand = 'APPLE',model = 'MACBOOK PRO "MK183"',par
     src_list=[]
     for j in trusted_sites:  
         a=search(q=search_mode+j+' +'+brand+' +'+model+' '+part_num+' +Technical Specifications')
-        if search_range == 'global': src_list = a
+        if search_range == 'global': 
+            src_list = list([x[2] for x in a])
         else: 
             if len(a)!=0: src_list.append(a[0][2])
     return src_list
