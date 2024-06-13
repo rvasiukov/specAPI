@@ -7,7 +7,7 @@ from description import get_seo
 from specifications import get_spec
 import urllib.request
 import json
-
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -42,7 +42,7 @@ def get_specifications(token:str, brand:str, model:str, part_num:str=''):
     except JWTError:
         raise HTTPException(status_code=401, detail="Неверные учетные данные")
 
-    return get_spec(brand, model, part_num)
+    return JSONResponse(content=get_spec(brand, model, part_num))
 
 @app.get("/get_description")
 def get_description(text, token):
@@ -52,7 +52,7 @@ def get_description(text, token):
     except JWTError:
         raise HTTPException(status_code=401, detail="Неверные учетные данные")
     res = get_seo(str(text))
-    return res
+    return JSONResponse(content=res)
 
 @app.post("/get_ip")
 def ip():
@@ -66,7 +66,7 @@ def get_fullcard(token:str, brand:str, model:str, part_num:str=''):
     except JWTError:
         raise HTTPException(status_code=401, detail="Неверные учетные данные")
     res = get_spec(brand, model, part_num)
-    y = json.loads(res)
+    y = res
     i=0
     s=''
     while True:
@@ -75,6 +75,5 @@ def get_fullcard(token:str, brand:str, model:str, part_num:str=''):
         except:
             break
         i+=1
-    m = {**json.loads(res),**json.loads(get_seo(str(s)))}
-    r = json.dumps(m, ensure_ascii=False)
-    return r
+    m = {**y,**get_seo(str(s))}
+    return JSONResponse(content=m)

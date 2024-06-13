@@ -141,7 +141,7 @@ def to_json(l):
         add_dict = construct(xx[0],xx[1],xx[2],i)
         a_dict['specifications'].update(add_dict)
         i+=1
-    return json.dumps(a_dict,ensure_ascii=False)
+    return a_dict
 
 
 def find_spec(trusted_sources,src_count = 10,brand = 'APPLE',model = 'MACBOOK PRO "MK183"',part_num = ''):
