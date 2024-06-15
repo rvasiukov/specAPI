@@ -222,7 +222,7 @@ def similarity_check(specifications_input):
                     l = el
         if max_similarity != 0:
             out[spec] = {'name': most_sim_spec, 'value': val, 'source': src}
-    print(out)
+    return out
 
 def get_spec(brand,model, part_num=''):
     trusted_sources = pickle.load(request.urlopen('https://storage.yandexcloud.net/trusted/sourses.pkl'))
