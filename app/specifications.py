@@ -199,11 +199,11 @@ def similarity_check(specifications_input):
     import codecs
     import json
     import jellyfish 
-    full_synonym_base = pickle.load(request.urlopen('https://storage.yandexcloud.net/trusted/full_synonym_base.pickle'))
+    full_synonym_base = json.load(open("full_synonym_base.txt"))
     f = specifications_input #Спецификации от API
     i=0
     for spec in f['specifications'].keys():
-        nam, val = f['specifications'][spec]['name'],f['specifications'][spec]['value']
+        nam, val, src = f['specifications'][spec]['name'],f['specifications'][spec]['value'],f['specifications'][spec]['source']
         f['specifications'][spec]['syns'] = []
         max_similarity = 0
         most_sim_spec = None
@@ -221,8 +221,8 @@ def similarity_check(specifications_input):
                     most_sim_spec = similar_spec
                     l = el
         if max_similarity != 0:
-            out[spec] = {'name': most_sim_spec, 'value': val}
-    return out
+            out[spec] = {'name': most_sim_spec, 'value': val, 'source': src}
+    print(out)
 
 def get_spec(brand,model, part_num=''):
     trusted_sources = pickle.load(request.urlopen('https://storage.yandexcloud.net/trusted/sourses.pkl'))
