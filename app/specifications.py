@@ -195,6 +195,36 @@ def find_spec(trusted_sources,src_count = 10,brand = 'APPLE',model = 'MACBOOK PR
     ch_mass=[i for i in ch_mass if i[0]!='del']
     return to_json(ch_mass)
 
+def similarity_check(specifications_input):
+    import codecs
+    import json
+    import jellyfish 
+    full_synonym_base = pickle.load(request.urlopen('https://storage.yandexcloud.net/trusted/full_synonym_base.pickle'))
+    f = specifications_input #Спецификации от API
+    i=0
+    for spec in f['specifications'].keys():
+        nam, val = f['specifications'][spec]['name'],f['specifications'][spec]['value']
+        f['specifications'][spec]['syns'] = []
+        max_similarity = 0
+        most_sim_spec = None
+        l=''
+        for similar_spec in full_synonym_base.keys():
+            target_list = full_synonym_base[similar_spec]
+            similarity = jellyfish.jaro_winkler_similarity(nam, similar_spec)
+            if similarity >= 0.8 and (similarity == max(similarity,max_similarity)):
+                max_similarity = similarity
+                most_sim_spec = similar_spec
+            for el in target_list:
+                similarity = jellyfish.jaro_winkler_similarity(nam, el)
+                if similarity >= 0.8 and (similarity == max(similarity,max_similarity)):
+                    max_similarity = similarity
+                    most_sim_spec = similar_spec
+                    l = el
+        if max_similarity != 0:
+            out[spec] = {'name': most_sim_spec, 'value': val}
+    return out
+
 def get_spec(brand,model, part_num=''):
     trusted_sources = pickle.load(request.urlopen('https://storage.yandexcloud.net/trusted/sourses.pkl'))
-    return find_spec(trusted_sources,brand=brand,model=model,part_num=part_num)
+    specifications_input = find_spec(trusted_sources,brand=brand,model=model,part_num=part_num)
+    return similarity_check(specifications_input)
