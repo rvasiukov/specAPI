@@ -199,7 +199,7 @@ def similarity_check(specifications_input):
     import codecs
     import json
     import jellyfish 
-    full_synonym_base = json.load(open("full_synonym_base.txt"))
+    full_synonym_base = pickle.load(request.urlopen('https://storage.yandexcloud.net/trusted/full_synonym_base.pickle'))
     f = specifications_input #Спецификации от API
     i=0
     for spec in f['specifications'].keys():
