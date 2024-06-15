@@ -201,7 +201,7 @@ def similarity_check(specifications_input):
     import jellyfish 
     full_synonym_base = pickle.load(request.urlopen('https://storage.yandexcloud.net/trusted/full_synonym_base.pickle'))
     f = specifications_input #Спецификации от API
-    i=0
+    out = {}
     for spec in f['specifications'].keys():
         nam, val, src = f['specifications'][spec]['name'],f['specifications'][spec]['value'],f['specifications'][spec]['source']
         f['specifications'][spec]['syns'] = []
